@@ -1,0 +1,28 @@
+FROM lmark1/uav_ros_simulation:focal
+
+ARG HOME=/root
+ARG CATKIN_WORKSPACE=uav_ws
+ARG USER=root
+
+# Step 1: Install all the needed software packages here
+RUN apt-get update && apt-get install -q -y \
+    vim
+    ros-noetic-octomap-*
+    ros-noetic-pcl-ros
+
+
+# Step 2: Create the icuas23_competition package and copy its contents
+WORKDIR $HOME/$CATKIN_WORKSPACE/src/icuas23_competition
+COPY . .
+
+WORKDIR $HOME
+RUN git clone https://github.com/OctoMap/octomap
+WORKDIR $HOME/octomap
+RUN mkdir build
+WORKDIR $HOME/octomap/build
+RUN cmake .. && make
+RUN sudo make install
+
+# Step 3: Build the Catkin workspace
+WORKDIR $HOME/$CATKIN_WORKSPACE/srcw
+RUN catkin build --limit-status-rate 0.2

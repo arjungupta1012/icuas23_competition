@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="FastPlannerOctomap" type="Planner" 
+  name="Planner" output="screen"
+  launch-prefix="valgrind" />
+</launch>
